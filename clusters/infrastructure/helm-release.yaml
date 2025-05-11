@@ -1,20 +1,22 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: nginx
+  name: kyverno
   namespace: flux-system
 spec:
-  interval: 1m
-  install:
-    createNamespace: true
-  targetNamespace: default
   chart:
     spec:
-      chart: nginx
-      version: "20.0.1"  # Using a version available in the HTTP repository
+      chart: kyverno
+      version: 3.4.0
       sourceRef:
-        kind: HelmRepository  # Changed from OCIRepository
-        name: bitnami
+        kind: HelmRepository
+        name: kyverno-repo
         namespace: flux-system
+  interval: 1h
+  timeout: 30m
+  install:
+    createNamespace: true
+  targetNamespace: kyverno
   values:
-    replicaCount: 2
+    config:
+      create: true
