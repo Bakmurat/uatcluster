@@ -1,9 +1,8 @@
-# infrastructure/base/000-helm-repository/bitnami-nginx.yaml
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
 metadata:
-  name: bitnami
+  name: bitnami-charts
   namespace: flux-system
 spec:
   interval: 1h
-  url: https://charts.bitnami.com/bitnami
+  url: oci://registry-1.docker.io/bitnamicharts
