@@ -11,9 +11,9 @@ spec:
   chart:
     spec:
       chart: nginx
-      version: "20.0.1"
+      version: "20.0.1"  # Using a version available in the HTTP repository
       sourceRef:
-        kind: OCIRepository
+        kind: HelmRepository  # Changed from OCIRepository
         name: bitnami-charts
         namespace: flux-system
   values:
