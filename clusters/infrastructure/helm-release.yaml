@@ -6,6 +6,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
+  install:
+    createNamespace: true
+  targetNamespace: default
   chart:
     spec:
       chart: nginx
