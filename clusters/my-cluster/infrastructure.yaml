@@ -5,7 +5,7 @@ metadata:
   name: infrastructure
   namespace: flux-system
 spec:
-  interval: 2m0s
+  interval: 8h0m0s
   path: ./clusters/infrastructure
   prune: true
   sourceRef:

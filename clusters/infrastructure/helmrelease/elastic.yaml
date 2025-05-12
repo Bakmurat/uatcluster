@@ -12,7 +12,7 @@ spec:
         kind: HelmRepository
         name: elastic
         namespace: flux-system
-  interval: 50m
+  interval: 8h0m0s
   install:
     createNamespace: true
   targetNamespace: logging
