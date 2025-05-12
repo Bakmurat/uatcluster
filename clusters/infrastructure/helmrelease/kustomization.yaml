@@ -4,4 +4,4 @@ resources:
   - podinfo.yaml
   - elastic.yaml
   - kibana.yaml
-  
+  - fluentd.yaml

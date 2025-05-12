@@ -1,0 +1,234 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: fluentd
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: fluentd
+      version: 0.5.2
+      sourceRef:
+        kind: HelmRepository
+        name: fluent
+        namespace: flux-system
+  interval: 50m
+  install:
+    createNamespace: true
+  targetNamespace: logging
+  values:
+    kind: "DaemonSet"
+    # Use elasticsearch7 variant which matches our existing Elasticsearch setup
+    variant: elasticsearch7
+
+    # Configure Image
+    image:
+      repository: fluent/fluentd-kubernetes-daemonset
+      pullPolicy: IfNotPresent
+      # Tag will be auto-selected based on variant
+
+    # Configure ServiceAccount
+    serviceAccount:
+      create: true
+      annotations: {}
+      # name will default to release name if not specified
+
+    # Configure resources
+    resources:
+      requests:
+        cpu: 150m
+        memory: 300Mi
+      limits:
+        cpu: 300m
+        memory: 600Mi
+
+    # Configure RBAC
+    rbac:
+      create: true
+
+    # Configure Pod security context
+    podSecurityContext:
+      enabled: true
+      fsGroup: 0 # Allow access to log files
+      runAsUser: 0 # Run as root to access log files
+      runAsGroup: 0
+
+    # Configure Security context for containers
+    securityContext:
+      privileged: true
+      capabilities:
+        add: ["SYS_ADMIN"]
+
+    # Configure persistence for buffer files
+    persistence:
+      enabled: false
+      # Removing storage class since persistence is disabled
+      # storageClass: "harvester"
+      # accessMode: ReadWriteOnce
+      # size: 5Gi
+
+
+    # Configure liveness and readiness probes
+    livenessProbe:
+      httpGet:
+        path: /metrics
+        port: metrics
+      initialDelaySeconds: 60
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+    readinessProbe:
+      httpGet:
+        path: /metrics
+        port: metrics
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+    # Configure Kubernetes tolerations
+    tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+
+    # Configure service
+    service:
+      enabled: true
+      type: "ClusterIP"
+      ports:
+        - name: "forward"
+          protocol: TCP
+          containerPort: 24224
+
+    # Configure Pod metrics for Prometheus
+    metrics:
+      serviceMonitor:
+        enabled: false
+        additionalLabels:
+          release: prometheus-operator
+
+    volumeMounts:
+      - name: posfile-storage
+        mountPath: /fluentd/log
+
+    volumes:
+      - name: posfile-storage
+        emptyDir: {}
+
+    fileConfigs:
+      01_sources.conf: |-
+        ## logs from podman
+        <source>
+          @type tail
+          @id in_tail_container_logs
+          @label @KUBERNETES
+          path /var/log/containers/*.log
+          pos_file /fluentd/log/fluentd-containers.log.pos
+          tag kubernetes.*
+          read_from_head true
+          <parse>
+            @type multi_format
+            <pattern>
+              format json
+              time_key time
+              time_type string
+              time_format "%Y-%m-%dT%H:%M:%S.%NZ"
+              keep_time_key false
+            </pattern>
+            <pattern>
+              format regexp
+              expression /^(?<time>.+) (?<stream>stdout|stderr)( (.))? (?<log>.*)$/
+              time_format '%Y-%m-%dT%H:%M:%S.%NZ'
+              keep_time_key false
+            </pattern>
+          </parse>
+          emit_unmatched_lines true
+        </source>
+
+        <source>
+          @type prometheus
+          bind 0.0.0.0
+          port 24231
+          metrics_path /metrics
+        </source>
+
+      02_filters.conf: |-
+        <label @KUBERNETES>
+          <match kubernetes.var.log.containers.fluentd**>
+            @type relabel
+            @label @FLUENT_LOG
+          </match>
+
+          # <match kubernetes.var.log.containers.**_kube-system_**>
+          #   @type null
+          #   @id ignore_kube_system_logs
+          # </match>
+
+          <filter kubernetes.**>
+            @type kubernetes_metadata
+            @id filter_kube_metadata
+            skip_labels false
+            skip_container_metadata false
+            skip_namespace_metadata true
+            skip_master_url true
+          </filter>
+
+          <match **>
+            @type relabel
+            @label @DISPATCH
+          </match>
+        </label>
+
+      03_dispatch.conf: |-
+        <label @DISPATCH>
+          <filter **>
+            @type prometheus
+            <metric>
+              name fluentd_input_status_num_records_total
+              type counter
+              desc The total number of incoming records
+              <labels>
+                tag ${tag}
+                hostname ${hostname}
+              </labels>
+            </metric>
+          </filter>
+
+          <match **>
+            @type relabel
+            @label @OUTPUT
+          </match>
+        </label>
+
+      04_outputs.conf: |-
+        <label @OUTPUT>
+          <match **>
+            @type elasticsearch
+            host "elasticsearch-master"
+            port 9200
+            path ""
+            # Use a consistent index naming pattern that Kibana can easily recognize
+            index_name fluentd-%Y.%m.%d
+            # Don't wait for elastic to start up.
+            verify_es_version_at_startup false
+            # Include basic logging configuration
+            log_level info
+            # Reconnect on failure
+            reconnect_on_error true
+            # Buffer settings for reliability
+            <buffer>
+              @type file
+              path /fluentd/log/buffer
+              flush_thread_count 2
+              flush_interval 5s
+              retry_type exponential_backoff
+              retry_wait 1s
+              retry_max_interval 60s
+            </buffer>
+          </match>
+        </label>
