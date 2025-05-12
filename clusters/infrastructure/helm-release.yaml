@@ -1,22 +1,33 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kyverno
-  namespace: flux-system
+  name: podinfo
+  namespace: default
 spec:
+  interval: 10m
+  timeout: 5m
   chart:
     spec:
-      chart: kyverno
-      version: 3.4.0
+      chart: podinfo
+      version: '6.5.*'
       sourceRef:
         kind: HelmRepository
-        name: kyverno-repo
-        namespace: flux-system
-  interval: 1h
-  timeout: 30m
+        name: podinfo
+      interval: 5m
+  releaseName: podinfo
   install:
-    createNamespace: true
-  targetNamespace: kyverno
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  test:
+    enable: true
+  driftDetection:
+    mode: enabled
+    ignore:
+    - paths: ["/spec/replicas"]
+      target:
+        kind: Deployment
   values:
-    config:
-      create: true
+    replicaCount: 2
