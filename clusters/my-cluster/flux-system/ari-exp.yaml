@@ -19,7 +19,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 8h0m0s
-  path: ./clusters/my-cluster
+  path: ./clusters/infrastructure/
   prune: true
   sourceRef:
     kind: GitRepository
