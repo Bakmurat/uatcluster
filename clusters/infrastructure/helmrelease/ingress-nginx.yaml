@@ -1,8 +1,8 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: prometheus
-  namespace: monitoring
+  name: ingress-nginx
+  namespace: ingress-nginx
 spec:
   chart:
     spec:
