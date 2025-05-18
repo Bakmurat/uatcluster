@@ -4,3 +4,4 @@ resources:
   - podinfo.yaml
   - elastic.yaml
   - fluent.yaml
+  - prometheus.yaml
