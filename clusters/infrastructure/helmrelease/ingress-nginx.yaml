@@ -22,3 +22,4 @@ spec:
       type: LoadBalancer
       annotations:
         cloudprovider.harvesterhci.io/ipam: dhcp
+        cloudprovider.harvesterhci.io/healthcheck-port: "80"
