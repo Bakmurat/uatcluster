@@ -17,9 +17,10 @@ spec:
     createNamespace: true
   targetNamespace: ingress-nginx
   values:
-    service:
-      enabled: true
-      type: LoadBalancer
-      annotations:
-        cloudprovider.harvesterhci.io/ipam: dhcp
-        cloudprovider.harvesterhci.io/healthcheck-port: "80"
+    controller:
+      service:
+        enabled: true
+        type: LoadBalancer
+        annotations:
+          cloudprovider.harvesterhci.io/ipam: dhcp
+          cloudprovider.harvesterhci.io/healthcheck-port: "80"
