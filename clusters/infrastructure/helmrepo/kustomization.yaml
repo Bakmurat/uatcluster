@@ -5,3 +5,4 @@ resources:
   - elastic.yaml
   - fluent.yaml
   - prometheus.yaml
+  - ingress-nginx.yaml
