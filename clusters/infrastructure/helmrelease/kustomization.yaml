@@ -5,3 +5,4 @@ resources:
   - elastic.yaml
   - kibana.yaml
   - fluentd.yaml
+  - prometheus.yaml
