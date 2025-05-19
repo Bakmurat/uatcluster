@@ -4,3 +4,5 @@ resources:
   - loggingns.yaml
   - monitoring.yaml
   - ingress-nginx.yaml
+  - cert-manager.yaml
+  
