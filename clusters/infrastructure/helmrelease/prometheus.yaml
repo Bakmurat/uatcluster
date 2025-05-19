@@ -25,6 +25,6 @@ spec:
         annotations:
           kubernetes.io/ingress.class: nginx
         hosts:
-          - grafanauat.devkuban.com
+          - grafana.uat.devkuban.com
         
    
