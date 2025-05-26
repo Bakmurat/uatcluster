@@ -44,15 +44,15 @@ spec:
       port: 5601
 
     ingress:
-      enabled: false
+      enabled: true
       className: "nginx"
       pathtype: ImplementationSpecific
-      annotations: {}
+      annotations:
+        kubernetes.io/ingress.class: nginx
       hosts:
-        - host: kibana.local
+        - host: kibana.uat.devkuban.com
           paths:
             - path: /
-      tls: []
 
     lifecycle:
       postStart:
