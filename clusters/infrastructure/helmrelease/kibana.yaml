@@ -51,8 +51,6 @@ spec:
         kubernetes.io/ingress.class: nginx
       hosts:
         - host: kibana.uat.devkuban.com
-          paths:
-            - path: /
 
     lifecycle:
       postStart:
