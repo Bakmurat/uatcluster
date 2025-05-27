@@ -17,6 +17,41 @@ spec:
     createNamespace: true
   targetNamespace: monitoring
   values:
+    additionalPrometheusRules:
+      - name: basic-cluster-alerts            # becomes metadata.name
+        # labels below are optional; they are merged with the chart’s defaults
+        labels:
+          app.kubernetes.io/part-of: kube-prometheus-stack
+          severity: warning
+        groups:
+          - name: pod-health.rules            # Prometheus group
+            rules:
+              # 1️⃣  frequent restarts
+              - alert: PodCrashLooping
+                expr: increase(kube_pod_container_status_restarts_total[5m]) > 3
+                for: 10m
+                labels:
+                  severity: warning
+                annotations:
+                  summary:  Pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting
+                  description: |
+                    Container {{ $labels.container }} in pod {{ $labels.pod }}
+                    restarted {{ $value }} times within the last 5 minutes.
+
+              # 2️⃣  high CPU
+              - alert: PodHighCPU
+                expr: |
+                  sum by (pod,namespace) (
+                    rate(container_cpu_usage_seconds_total{container!="POD"}[5m])
+                  ) * 100 > 80
+                for: 2m
+                labels:
+                  severity: critical
+                annotations:
+                  summary: High CPU usage on {{ $labels.namespace }}/{{ $labels.pod }}
+                  description: |
+                    CPU > 80 % for > 2 minutes (current = {{ $value | printf "%.1f" }} %)
+
     alertmanager:
       ingress:
         enabled: true
