@@ -17,6 +17,14 @@ spec:
     createNamespace: true
   targetNamespace: monitoring
   values:
+    alertmanagers:
+      ingress:
+        enabled: true
+        ingressClassName: nginx
+        annotations:
+          kubernetes.io/ingress.class: nginx
+        hosts:
+          - alertmanager.uat.devkuban.com
     prometheus:
       ingress:
         enabled: true
