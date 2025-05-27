@@ -17,6 +17,15 @@ spec:
     createNamespace: true
   targetNamespace: monitoring
   values:
+    prometheus:
+      ingress:
+        enabled: true
+        ingressClassName: nginx
+        annotations:
+          kubernetes.io/ingress.class: nginx
+        hosts:
+          - prometheus.uat.devkuban.com
+
     grafana:
       enabled: true
       ingress:
