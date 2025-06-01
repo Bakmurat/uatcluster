@@ -7,3 +7,4 @@ resources:
   - prometheus.yaml
   - ingress-nginx.yaml
   - cert-manager.yaml
+  - nginx.yaml
