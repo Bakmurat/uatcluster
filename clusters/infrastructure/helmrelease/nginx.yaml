@@ -20,4 +20,10 @@ spec:
     service:
       type: ClusterIP
     ingress:
-      enabled: false
+      enabled: true
+      hostname: nginx.uat.devkuban.com
+      path: /
+      annotations:
+          kubernetes.io/ingress.class: nginx
+      ingressClassName: "nginx"
+      
