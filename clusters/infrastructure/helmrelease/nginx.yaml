@@ -17,6 +17,8 @@ spec:
     createNamespace: true
   targetNamespace: nginx
   values:
+    metrics:
+      enabled: true
     service:
       type: ClusterIP
     ingress:
