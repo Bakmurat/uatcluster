@@ -21,6 +21,8 @@ spec:
       enabled: true
     service:
       type: ClusterIP
+    serviceMonitor:
+      enabled: true
     ingress:
       enabled: true
       hostname: nginx.uat.devkuban.com
