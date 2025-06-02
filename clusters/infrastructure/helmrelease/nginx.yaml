@@ -21,7 +21,6 @@ spec:
       enabled: true
       serviceMonitor:
         enabled: true
-        namespace: "monitoring"
     service:
       type: ClusterIP
     ingress:

@@ -68,6 +68,12 @@ spec:
           kubernetes.io/ingress.class: nginx
         hosts:
           - prometheus.uat.devkuban.com
+      prometheusSpec:
+        serviceMonitorSelector: {}
+        serviceMonitorNamespaceSelector:
+          matchNames:
+            - monitoring
+            - nginx
 
     grafana:
       enabled: true
