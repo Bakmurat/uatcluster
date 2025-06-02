@@ -20,7 +20,7 @@ spec:
     metrics:
       enabled: true
       serviceMonitor:
-        enabled: false
+        enabled: true
         labels:
           release: monitoring-prometheus
         jobLabel: app.kubernetes.io/name
