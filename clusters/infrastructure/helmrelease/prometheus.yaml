@@ -70,10 +70,7 @@ spec:
           - prometheus.uat.devkuban.com
       prometheusSpec:
         serviceMonitorSelector: {}
-        serviceMonitorNamespaceSelector:
-          matchNames:
-            - monitoring
-            - nginx
+        serviceMonitorNamespaceSelector: {}
 
     grafana:
       enabled: true
