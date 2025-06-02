@@ -19,11 +19,11 @@ spec:
   values:
     metrics:
       enabled: true
+      serviceMonitor:
+        enabled: true
+        namespace: "nginx"
     service:
       type: ClusterIP
-    serviceMonitor:
-      enabled: true
-      namespace: "nginx"
     ingress:
       enabled: true
       hostname: nginx.uat.devkuban.com
