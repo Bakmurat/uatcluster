@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-token-secret-uat
+  namespace: cert-manager
+type: Opaque
+stringData:
+  api-token: GbKpPJAmG4tilwmK5gxTWjrd48et6Oallr-_CueM
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-dns-issuer-uat-domain
+spec:
+  acme:
+    email: bakmuratkubanaliev@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-dns-private-key-uat
+    solvers:
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token-secret-uat
+            key: api-token
+      selector:
+        dnsZones:
+        - uat.devkuban.com
