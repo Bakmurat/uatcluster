@@ -11,3 +11,18 @@ spec:
     kind: ClusterIssuer
     name: letsencrypt-dns-issuer-uat-domain
   secretName: wildcard-uat-devkuban-com-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-uat-devkuban-cert-logging
+  namespace: logging
+spec:
+  commonName: '*.uat.devkuban.com'
+  dnsNames:
+    - '*.uat.devkuban.com'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-issuer-uat-domain
+  secretName: wildcard-uat-devkuban-com-tls
+
