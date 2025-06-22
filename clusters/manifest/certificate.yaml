@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: wildcard-uat-devkuban-cert
-  namespace: ingress-nginx
+  namespace: monitoring
 spec:
   commonName: '*.uat.devkuban.com'
   dnsNames:
