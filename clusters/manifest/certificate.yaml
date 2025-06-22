@@ -25,4 +25,16 @@ spec:
     kind: ClusterIssuer
     name: letsencrypt-dns-issuer-uat-domain
   secretName: wildcard-uat-devkuban-com-tls
-
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nginx-uat-cert
+  namespace: nginx
+spec:
+  secretName: nginx-uat-tls
+  issuerRef:
+    name: letsencrypt-http01-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - nginx.uat.devkuban.com

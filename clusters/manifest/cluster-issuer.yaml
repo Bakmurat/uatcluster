@@ -26,3 +26,18 @@ spec:
       selector:
         dnsZones:
         - uat.devkuban.com
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-http01-issuer
+spec:
+  acme:
+    email: bakmuratkubanaliev@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-http01-private-key
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
