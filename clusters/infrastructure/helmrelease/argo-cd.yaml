@@ -166,7 +166,7 @@ spec:
         extraTls:
           - secretName: wildcard-uat-devkuban-com-tls
             hosts:
-              - argocd-grpc.uat.devkuban.com
+              - grpc.argocd.uat.devkuban.com
 
     # Repository Server - HA
     repoServer:
@@ -229,6 +229,8 @@ spec:
 
     # ConfigMap for additional configuration
     configs:
+      params:
+        server.insecure: true
       cm:
         create: true
         data:
