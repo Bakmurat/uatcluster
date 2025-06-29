@@ -140,42 +140,37 @@ spec:
           g, argocd-admins, role:admin
           g, argocd-developers, role:developer
           g, argocd-readonly, role:readonly
-      # Ingress Configuration
+          
       ingress:
         enabled: true
         ingressClassName: "nginx"
         annotations:
           kubernetes.io/ingress.class: nginx
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
-          nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-          nginx.ingress.kubernetes.io/grpc-backend: "true"
-        hosts:
-          - host: argocd.uat.devkuban.com
-            paths:
-              - path: /
-                pathType: Prefix
-        tls:
+        hostname: "argocd.uat.devkuban.com"
+        path: /
+        pathType: Prefix
+        tls: true
+        extraTls:
           - secretName: wildcard-uat-devkuban-com-tls
-            hosts:
-              - argocd.uat.devkuban.com
-        grpc:
-          enabled: true
-          ingress:
-            enabled: true
-            ingressClassName: "nginx"
-            annotations:
-              kubernetes.io/ingress.class: nginx
-              nginx.ingress.kubernetes.io/ssl-redirect: "true"
-              nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-            hosts:
-              - host: argocd-grpc.uat.devkuban.com
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - secretName: wildcard-uat-devkuban-com-tls
-                hosts:
-                  - argocd-grpc.uat.devkuban.com
+        hosts:
+          - argocd.uat.devkuban.com
+
+      ingressGrpc:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          kubernetes.io/ingress.class: nginx
+          nginx.ingress.kubernetes.io/ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+        hostname: "argocd-grpc.uat.devkuban.com"
+        path: /
+        pathType: Prefix
+        tls: true
+        extraTls:
+          - secretName: wildcard-uat-devkuban-com-tls
+        hosts:
+          - argocd-grpc.uat.devkuban.com
 
     # Repository Server - HA
     repoServer:
