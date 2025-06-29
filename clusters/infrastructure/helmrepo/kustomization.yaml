@@ -7,4 +7,5 @@ resources:
   - ingress-nginx.yaml
   - cert-manager.yaml
   - nginx.yaml
+  - argo-cd.yaml
   
