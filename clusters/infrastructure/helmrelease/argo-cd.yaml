@@ -19,6 +19,7 @@ spec:
   values:
     # Global configuration
     global:
+      domain: argocd.uat.devkuban.com
       image:
         repository: quay.io/argoproj/argocd
         tag: "v2.12.6"
@@ -140,22 +141,20 @@ spec:
           g, argocd-admins, role:admin
           g, argocd-developers, role:developer
           g, argocd-readonly, role:readonly
-          
+      # Ingress Configuration
       ingress:
         enabled: true
         ingressClassName: "nginx"
         annotations:
           kubernetes.io/ingress.class: nginx
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
-        hostname: "argocd.uat.devkuban.com"
-        path: /
-        pathType: Prefix
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         tls: true
         extraTls:
           - secretName: wildcard-uat-devkuban-com-tls
-        hosts:
-          - argocd.uat.devkuban.com
-
+            hosts:
+              - argocd.uat.devkuban.com
+      # gRPC Ingress
       ingressGrpc:
         enabled: true
         ingressClassName: "nginx"
@@ -163,14 +162,11 @@ spec:
           kubernetes.io/ingress.class: nginx
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-        hostname: "argocd-grpc.uat.devkuban.com"
-        path: /
-        pathType: Prefix
         tls: true
         extraTls:
           - secretName: wildcard-uat-devkuban-com-tls
-        hosts:
-          - argocd-grpc.uat.devkuban.com
+            hosts:
+              - argocd-grpc.uat.devkuban.com
 
     # Repository Server - HA
     repoServer:
